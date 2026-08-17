@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+
+{% block title %}
+My Resumes — ResumeAI
+{% endblock %}
+
+{% block content %}
+
+<section class="page-header">
+
+    <div>
+
+        <p class="eyebrow">
+            RESUME MANAGEMENT
+        </p>
+
+        <h1>
+            My Resumes
+        </h1>
+
+        <p>
+            Manage, analyze and optimize your resume versions.
+        </p>
+
+    </div>
+
+    <a
+        href="{{ url_for('resume.upload') }}"
+        class="btn"
+    >
+        + Upload Resume
+    </a>
+
+</section>
+
+
+{% if resumes %}
+
+<div class="resume-grid">
+
+    {% for resume in resumes %}
+
+    <article class="resume-card">
+
+        <div class="resume-card-header">
+
+            <div class="resume-icon">
+                📄
+            </div>
+
+            <div>
+
+                <h2>
+                    {{ resume.title }}
+                </h2>
+
+                <p>
+                    Version {{ resume.version }}
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="resume-meta">
+
+            <div>
+
+                <span>
+                    Created
+                </span>
+
+                <strong>
+                    {{ resume.created_at.strftime('%d %b %Y') }}
+                </strong>
+
+            </div>
+
+
+            <div>
+
+                <span>
+                    Updated
+                </span>
+
+                <strong>
+                    {{ resume.updated_at.strftime('%d %b %Y') }}
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="resume-status">
+
+            <span class="status-badge">
+                Uploaded
+            </span>
+
+        </div>
+
+
+        <div class="resume-actions">
+
+            <a
+                href="{{ url_for(
+                    'resume.view',
+                    resume_id=resume.id
+                ) }}"
+                class="btn secondary"
+            >
+                View
+            </a>
+
+
+            <a
+                href="#"
+                class="btn secondary"
+            >
+                Analyze
+            </a>
+
+
+            <form
+                method="POST"
+                action="{{ url_for(
+                    'resume.create_version',
+                    resume_id=resume.id
+                ) }}"
+            >
+
+                <button
+                    type="submit"
+                    class="btn secondary"
+                >
+                    New Version
+                </button>
+
+            </form>
+
+
+            <form
+                method="POST"
+                action="{{ url_for(
+                    'resume.delete',
+                    resume_id=resume.id
+                ) }}"
+                onsubmit="return confirm(
+                    'Delete this resume permanently?'
+                );"
+            >
+
+                <button
+                    type="submit"
+                    class="btn danger"
+                >
+                    Delete
+                </button>
+
+            </form>
+
+        </div>
+
+    </article>
+
+    {% endfor %}
+
+</div>
+
+
+{% else %}
+
+<div class="empty-state">
+
+    <div class="empty-icon">
+        📄
+    </div>
+
+    <h2>
+        No resumes yet
+    </h2>
+
+    <p>
+        Upload your first resume and start your AI analysis.
+    </p>
+
+    <a
+        href="{{ url_for('resume.upload') }}"
+        class="btn"
+    >
+        Upload Resume
+    </a>
+
+</div>
+
+{% endif %}
+
+{% endblock %}

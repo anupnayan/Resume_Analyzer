@@ -1,0 +1,329 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ resume.title }} — ResumeAI
+{% endblock %}
+
+{% block content %}
+
+<section class="page-header">
+
+    <div>
+
+        <p class="eyebrow">
+            RESUME PROFILE
+        </p>
+
+        <h1>
+            {{ resume.title }}
+        </h1>
+
+        <p>
+            Version {{ resume.version }}
+        </p>
+
+    </div>
+
+    <a
+        href="{{ url_for('resume.index') }}"
+        class="btn secondary"
+    >
+        ← My Resumes
+    </a>
+
+</section>
+
+
+<section class="profile-grid">
+
+    <div class="profile-card">
+
+        <h2>
+            Candidate Information
+        </h2>
+
+        <div class="profile-item">
+
+            <span>
+                Name
+            </span>
+
+            <strong>
+                {{ resume.resume_profile.name or "Not detected" }}
+            </strong>
+
+        </div>
+
+
+        <div class="profile-item">
+
+            <span>
+                Email
+            </span>
+
+            <strong>
+                {{ resume.resume_profile.email or "Not detected" }}
+            </strong>
+
+        </div>
+
+
+        <div class="profile-item">
+
+            <span>
+                Phone
+            </span>
+
+            <strong>
+                {{ resume.resume_profile.phone or "Not detected" }}
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <div class="profile-card">
+
+        <h2>
+            Skills
+        </h2>
+
+        {% if resume.resume_profile.skills %}
+
+            <div class="skill-list">
+
+                {% for skill in resume.resume_profile.skills %}
+
+                    <span class="skill-tag">
+                        {{ skill }}
+                    </span>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <p>
+                No skills detected.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+
+    <div class="profile-card">
+
+        <h2>
+            Links
+        </h2>
+
+        {% if resume.resume_profile.links %}
+
+            {% for link in resume.resume_profile.links %}
+
+                <p>
+                    <a
+                        href="{{ link }}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        {{ link }}
+                    </a>
+                </p>
+
+            {% endfor %}
+
+        {% else %}
+
+            <p>
+                No links detected.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+
+    <div class="profile-card">
+
+        <h2>
+            Summary
+        </h2>
+
+        {% if resume.resume_profile.summary %}
+
+            <p>
+                {{ resume.resume_profile.summary }}
+            </p>
+
+        {% else %}
+
+            <p>
+                No professional summary detected.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+
+    <div class="profile-card full-width">
+
+        <h2>
+            Education
+        </h2>
+
+        {% if resume.resume_profile.education %}
+
+            <ul>
+
+                {% for item in resume.resume_profile.education %}
+
+                    <li>
+                        {{ item }}
+                    </li>
+
+                {% endfor %}
+
+            </ul>
+
+        {% else %}
+
+            <p>
+                No education section detected.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+
+    <div class="profile-card full-width">
+
+        <h2>
+            Experience
+        </h2>
+
+        {% if resume.resume_profile.experience %}
+
+            <ul>
+
+                {% for item in resume.resume_profile.experience %}
+
+                    <li>
+                        {{ item }}
+                    </li>
+
+                {% endfor %}
+
+            </ul>
+
+        {% else %}
+
+            <p>
+                No experience section detected.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+
+    <div class="profile-card full-width">
+
+        <h2>
+            Projects
+        </h2>
+
+        {% if resume.resume_profile.projects %}
+
+            <ul>
+
+                {% for item in resume.resume_profile.projects %}
+
+                    <li>
+                        {{ item }}
+                    </li>
+
+                {% endfor %}
+
+            </ul>
+
+        {% else %}
+
+            <p>
+                No projects detected.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+
+    <div class="profile-card">
+
+        <h2>
+            Certifications
+        </h2>
+
+        {% if resume.resume_profile.certifications %}
+
+            <ul>
+
+                {% for item in resume.resume_profile.certifications %}
+
+                    <li>
+                        {{ item }}
+                    </li>
+
+                {% endfor %}
+
+            </ul>
+
+        {% else %}
+
+            <p>
+                No certifications detected.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+
+    <div class="profile-card">
+
+        <h2>
+            Achievements
+        </h2>
+
+        {% if resume.resume_profile.achievements %}
+
+            <ul>
+
+                {% for item in resume.resume_profile.achievements %}
+
+                    <li>
+                        {{ item }}
+                    </li>
+
+                {% endfor %}
+
+            </ul>
+
+        {% else %}
+
+            <p>
+                No achievements detected.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+{% endblock %}

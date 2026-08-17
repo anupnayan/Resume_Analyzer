@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}
+Upload Resume — ResumeAI
+{% endblock %}
+
+{% block content %}
+
+<div class="upload-card">
+
+    <p class="eyebrow">
+        RESUME ANALYZER
+    </p>
+
+    <h1>
+        Upload Your Resume
+    </h1>
+
+    <p>
+        Upload a PDF, DOCX or TXT resume to begin analysis.
+    </p>
+
+    <form
+        method="POST"
+        enctype="multipart/form-data"
+        action="{{ url_for('resume.upload') }}"
+    >
+
+        <div class="upload-box">
+
+            <input
+                type="file"
+                name="resume"
+                accept=".pdf,.docx,.txt"
+                required
+            >
+
+            <p>
+                Supported formats:
+                PDF, DOCX, TXT
+            </p>
+
+            <p>
+                Maximum size:
+                10 MB
+            </p>
+
+        </div>
+
+        <button
+            type="submit"
+            class="btn"
+        >
+            Upload & Analyze
+        </button>
+
+    </form>
+
+</div>
+
+{% endblock %}

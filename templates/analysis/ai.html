@@ -1,0 +1,320 @@
+{% extends "base.html" %}
+
+{% block title %}
+AI Resume Review — ResumeAI
+{% endblock %}
+
+{% block content %}
+
+<section class="page-header">
+
+    <p class="eyebrow">
+        GENERATIVE AI
+    </p>
+
+    <h1>
+        AI Resume Review
+    </h1>
+
+    <p>
+        {{ resume.title }}
+    </p>
+
+</section>
+
+
+{% if ai_error %}
+
+<section class="ai-error-card">
+
+    <div class="error-icon">
+        ⚠️
+    </div>
+
+    <div>
+
+        <h2>
+            AI service unavailable
+        </h2>
+
+        <p>
+            Your resume was successfully processed,
+            but the AI review could not be generated.
+        </p>
+
+        <p class="error-detail">
+            {{ ai_error }}
+        </p>
+
+    </div>
+
+</section>
+
+{% else %}
+
+
+<section class="analysis-card">
+
+    <h2>
+        AI Summary
+    </h2>
+
+    <p class="ai-summary">
+        {{ ai_result.summary }}
+    </p>
+
+</section>
+
+
+<section class="score-grid">
+
+    <div class="score-card">
+
+        <span>
+            Content
+        </span>
+
+        <strong>
+            {{ ai_result.content_score }}%
+        </strong>
+
+    </div>
+
+
+    <div class="score-card">
+
+        <span>
+            Skills
+        </span>
+
+        <strong>
+            {{ ai_result.skills_score }}%
+        </strong>
+
+    </div>
+
+
+    <div class="score-card">
+
+        <span>
+            Experience
+        </span>
+
+        <strong>
+            {{ ai_result.experience_score }}%
+        </strong>
+
+    </div>
+
+
+    <div class="score-card">
+
+        <span>
+            Formatting
+        </span>
+
+        <strong>
+            {{ ai_result.format_score }}%
+        </strong>
+
+    </div>
+
+
+    <div class="score-card">
+
+        <span>
+            Impact
+        </span>
+
+        <strong>
+            {{ ai_result.impact_score }}%
+        </strong>
+
+    </div>
+
+
+    <div class="score-card">
+
+        <span>
+            Professionalism
+        </span>
+
+        <strong>
+            {{ ai_result.professionalism_score }}%
+        </strong>
+
+    </div>
+
+</section>
+
+
+<section class="keyword-grid">
+
+
+    <article class="analysis-card">
+
+        <h2>
+            ✓ Strengths
+        </h2>
+
+        {% if ai_result.strengths %}
+
+        <ul class="recommendation-list">
+
+            {% for item in ai_result.strengths %}
+
+            <li>
+                {{ item }}
+            </li>
+
+            {% endfor %}
+
+        </ul>
+
+        {% else %}
+
+        <p>
+            No strengths were returned.
+        </p>
+
+        {% endif %}
+
+    </article>
+
+
+    <article class="analysis-card">
+
+        <h2>
+            ✗ Weaknesses
+        </h2>
+
+        {% if ai_result.weaknesses %}
+
+        <ul class="recommendation-list">
+
+            {% for item in ai_result.weaknesses %}
+
+            <li>
+                {{ item }}
+            </li>
+
+            {% endfor %}
+
+        </ul>
+
+        {% else %}
+
+        <p>
+            No weaknesses were returned.
+        </p>
+
+        {% endif %}
+
+    </article>
+
+
+</section>
+
+
+<section class="analysis-card">
+
+    <h2>
+        AI Recommendations
+    </h2>
+
+    {% if ai_result.recommendations %}
+
+    <ol class="recommendation-list">
+
+        {% for item in ai_result.recommendations %}
+
+        <li>
+            {{ item }}
+        </li>
+
+        {% endfor %}
+
+    </ol>
+
+    {% else %}
+
+    <p>
+        No recommendations were returned.
+    </p>
+
+    {% endif %}
+
+</section>
+
+
+<section class="keyword-grid">
+
+
+    <article class="analysis-card">
+
+        <h2>
+            Missing Information
+        </h2>
+
+        {% if ai_result.missing_information %}
+
+        <ul class="recommendation-list">
+
+            {% for item in ai_result.missing_information %}
+
+            <li>
+                {{ item }}
+            </li>
+
+            {% endfor %}
+
+        </ul>
+
+        {% else %}
+
+        <p>
+            No major missing information detected.
+        </p>
+
+        {% endif %}
+
+    </article>
+
+
+    <article class="analysis-card">
+
+        <h2>
+            Generic Phrases
+        </h2>
+
+        {% if ai_result.generic_phrases %}
+
+        <ul class="recommendation-list">
+
+            {% for item in ai_result.generic_phrases %}
+
+            <li>
+                {{ item }}
+            </li>
+
+            {% endfor %}
+
+        </ul>
+
+        {% else %}
+
+        <p>
+            No major generic phrases detected.
+        </p>
+
+        {% endif %}
+
+    </article>
+
+
+</section>
+
+
+{% endif %}
+
+{% endblock %}

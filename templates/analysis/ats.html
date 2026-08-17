@@ -1,0 +1,478 @@
+{% extends "base.html" %}
+
+{% block title %}
+ATS & AI Analysis — ResumeAI
+{% endblock %}
+
+{% block content %}
+
+<section class="page-header">
+
+    <p class="eyebrow">
+        RESUMEAI ANALYSIS
+    </p>
+
+    <h1>
+        Resume Analysis Result
+    </h1>
+
+    <p>
+        ATS compatibility and AI-powered resume insights
+        for your selected job.
+    </p>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- RESUME + JOB INFORMATION -->
+<!-- ===================================================== -->
+
+<section class="analysis-card">
+
+    <h2>
+        {{ resume.title }}
+    </h2>
+
+    <p>
+        Target Position:
+        <strong>
+            {{ job.title }}
+        </strong>
+
+        {% if job.company %}
+            — {{ job.company }}
+        {% endif %}
+    </p>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- SCORE CARDS -->
+<!-- ===================================================== -->
+
+<section class="analysis-grid">
+
+    <div class="analysis-card">
+
+        <p class="eyebrow">
+            OVERALL SCORE
+        </p>
+
+        <h2>
+            {{ analysis.overall_score }}%
+        </h2>
+
+    </div>
+
+
+    <div class="analysis-card">
+
+        <p class="eyebrow">
+            ATS SCORE
+        </p>
+
+        <h2>
+            {{ analysis.ats_score }}%
+        </h2>
+
+    </div>
+
+
+    <div class="analysis-card">
+
+        <p class="eyebrow">
+            SKILLS
+        </p>
+
+        <h2>
+            {{ analysis.skills_score }}%
+        </h2>
+
+    </div>
+
+
+    <div class="analysis-card">
+
+        <p class="eyebrow">
+            EXPERIENCE
+        </p>
+
+        <h2>
+            {{ analysis.experience_score }}%
+        </h2>
+
+    </div>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- ATS BREAKDOWN -->
+<!-- ===================================================== -->
+
+<section class="analysis-card">
+
+    <p class="eyebrow">
+        ATS BREAKDOWN
+    </p>
+
+    <h2>
+        Resume Compatibility
+    </h2>
+
+
+    <div class="analysis-grid">
+
+        <div>
+            <strong>
+                Content
+            </strong>
+
+            <p>
+                {{ analysis.content_score }}%
+            </p>
+        </div>
+
+
+        <div>
+            <strong>
+                Education
+            </strong>
+
+            <p>
+                {{ analysis.education_score }}%
+            </p>
+        </div>
+
+
+        <div>
+            <strong>
+                Formatting
+            </strong>
+
+            <p>
+                {{ analysis.format_score }}%
+            </p>
+        </div>
+
+
+        <div>
+            <strong>
+                Impact
+            </strong>
+
+            <p>
+                {{ analysis.impact_score }}%
+            </p>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- MATCHED KEYWORDS -->
+<!-- ===================================================== -->
+
+<section class="analysis-card">
+
+    <p class="eyebrow">
+        KEYWORD ANALYSIS
+    </p>
+
+    <h2>
+        Matched Keywords
+    </h2>
+
+    {% if result.matched_keywords %}
+
+        <div class="keyword-list">
+
+            {% for keyword in result.matched_keywords %}
+
+                <span class="keyword">
+                    {{ keyword }}
+                </span>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <p>
+            No matched keywords found.
+        </p>
+
+    {% endif %}
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- MISSING KEYWORDS -->
+<!-- ===================================================== -->
+
+<section class="analysis-card">
+
+    <p class="eyebrow">
+        IMPROVEMENT AREAS
+    </p>
+
+    <h2>
+        Missing Keywords
+    </h2>
+
+    {% if result.missing_keywords %}
+
+        <div class="keyword-list">
+
+            {% for keyword in result.missing_keywords %}
+
+                <span class="keyword">
+                    {{ keyword }}
+                </span>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <p>
+            No major missing keywords detected.
+        </p>
+
+    {% endif %}
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- ATS FEEDBACK -->
+<!-- ===================================================== -->
+
+<section class="analysis-card">
+
+    <p class="eyebrow">
+        ATS RECOMMENDATIONS
+    </p>
+
+    <h2>
+        Recommendations
+    </h2>
+
+    {% if result.feedback %}
+
+        <ul>
+
+            {% for feedback in result.feedback %}
+
+                <li>
+                    {{ feedback }}
+                </li>
+
+            {% endfor %}
+
+        </ul>
+
+    {% elif analysis.ats_feedback %}
+
+        <ul>
+
+            {% for feedback in analysis.ats_feedback.split('\n') %}
+
+                {% if feedback.strip() %}
+
+                    <li>
+                        {{ feedback }}
+                    </li>
+
+                {% endif %}
+
+            {% endfor %}
+
+        </ul>
+
+    {% else %}
+
+        <p>
+            No additional ATS recommendations available.
+        </p>
+
+    {% endif %}
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- AI ANALYSIS -->
+<!-- ===================================================== -->
+
+<section class="analysis-card">
+
+    <p class="eyebrow">
+        AI INSIGHTS
+    </p>
+
+    <h2>
+        AI Resume Analysis
+    </h2>
+
+
+    {% if ai_error %}
+
+        <div class="alert">
+
+            <strong>
+                AI analysis unavailable
+            </strong>
+
+            <p>
+                {{ ai_error }}
+            </p>
+
+        </div>
+
+
+    {% elif ai_result %}
+
+        {% if ai_result is mapping %}
+
+            {% if ai_result.strengths %}
+
+                <div class="ai-section">
+
+                    <h3>
+                        Strengths
+                    </h3>
+
+                    <ul>
+
+                        {% for item in ai_result.strengths %}
+
+                            <li>
+                                {{ item }}
+                            </li>
+
+                        {% endfor %}
+
+                    </ul>
+
+                </div>
+
+            {% endif %}
+
+
+            {% if ai_result.weaknesses %}
+
+                <div class="ai-section">
+
+                    <h3>
+                        Weaknesses
+                    </h3>
+
+                    <ul>
+
+                        {% for item in ai_result.weaknesses %}
+
+                            <li>
+                                {{ item }}
+                            </li>
+
+                        {% endfor %}
+
+                    </ul>
+
+                </div>
+
+            {% endif %}
+
+
+            {% if ai_result.recommendations %}
+
+                <div class="ai-section">
+
+                    <h3>
+                        AI Recommendations
+                    </h3>
+
+                    <ul>
+
+                        {% for item in ai_result.recommendations %}
+
+                            <li>
+                                {{ item }}
+                            </li>
+
+                        {% endfor %}
+
+                    </ul>
+
+                </div>
+
+            {% endif %}
+
+
+            {% if ai_result.summary %}
+
+                <div class="ai-section">
+
+                    <h3>
+                        AI Summary
+                    </h3>
+
+                    <p>
+                        {{ ai_result.summary }}
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+        {% else %}
+
+            <p>
+                {{ ai_result }}
+            </p>
+
+        {% endif %}
+
+    {% else %}
+
+        <p>
+            AI analysis is not available for this result.
+        </p>
+
+    {% endif %}
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- ACTIONS -->
+<!-- ===================================================== -->
+
+<section class="analysis-card">
+
+    <a
+        href="{{ url_for('analysis.select_resume') }}"
+        class="btn primary"
+    >
+        Analyze Another Resume
+    </a>
+
+    <a
+        href="{{ url_for('main.dashboard') }}"
+        class="btn"
+    >
+        Back to Dashboard
+    </a>
+
+</section>
+
+
+{% endblock %}

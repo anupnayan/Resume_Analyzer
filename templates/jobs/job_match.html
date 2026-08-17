@@ -1,0 +1,285 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ job.title }} — ResumeAI
+{% endblock %}
+
+{% block content %}
+
+<section class="page-header">
+
+    <div>
+
+        <p class="eyebrow">
+            JOB INTELLIGENCE
+        </p>
+
+        <h1>
+            {{ job.title }}
+        </h1>
+
+        {% if job.company %}
+
+        <p>
+            {{ job.company }}
+        </p>
+
+        {% endif %}
+
+    </div>
+
+
+    <a
+        href="{{ url_for('jobs.index') }}"
+        class="btn secondary"
+    >
+        ← Jobs
+    </a>
+
+</section>
+
+
+{% set profile = job.job_profile %}
+
+
+<section class="analysis-grid">
+
+
+    <!-- Required Skills -->
+
+    <article class="analysis-card">
+
+        <h2>
+            Required Skills
+        </h2>
+
+        {% if profile.required_skills %}
+
+        <div class="tag-list">
+
+            {% for skill in profile.required_skills %}
+
+            <span class="tag required">
+                {{ skill }}
+            </span>
+
+            {% endfor %}
+
+        </div>
+
+        {% else %}
+
+        <p>
+            No required skills detected.
+        </p>
+
+        {% endif %}
+
+    </article>
+
+
+    <!-- Preferred Skills -->
+
+    <article class="analysis-card">
+
+        <h2>
+            Preferred Skills
+        </h2>
+
+        {% if profile.preferred_skills %}
+
+        <div class="tag-list">
+
+            {% for skill in profile.preferred_skills %}
+
+            <span class="tag preferred">
+                {{ skill }}
+            </span>
+
+            {% endfor %}
+
+        </div>
+
+        {% else %}
+
+        <p>
+            No preferred skills detected.
+        </p>
+
+        {% endif %}
+
+    </article>
+
+
+    <!-- Technologies -->
+
+    <article class="analysis-card">
+
+        <h2>
+            Technologies
+        </h2>
+
+        {% if profile.technologies %}
+
+        <div class="tag-list">
+
+            {% for technology in profile.technologies %}
+
+            <span class="tag">
+                {{ technology }}
+            </span>
+
+            {% endfor %}
+
+        </div>
+
+        {% else %}
+
+        <p>
+            No technologies detected.
+        </p>
+
+        {% endif %}
+
+    </article>
+
+
+    <!-- Soft Skills -->
+
+    <article class="analysis-card">
+
+        <h2>
+            Soft Skills
+        </h2>
+
+        {% if profile.soft_skills %}
+
+        <div class="tag-list">
+
+            {% for skill in profile.soft_skills %}
+
+            <span class="tag soft">
+                {{ skill }}
+            </span>
+
+            {% endfor %}
+
+        </div>
+
+        {% else %}
+
+        <p>
+            No soft skills detected.
+        </p>
+
+        {% endif %}
+
+    </article>
+
+
+    <!-- Experience -->
+
+    <article class="analysis-card">
+
+        <h2>
+            Experience Requirement
+        </h2>
+
+        <p>
+            {{ profile.experience or
+               "No specific experience requirement detected." }}
+        </p>
+
+    </article>
+
+
+    <!-- Education -->
+
+    <article class="analysis-card">
+
+        <h2>
+            Education
+        </h2>
+
+        <p>
+            {{ profile.education or
+               "No specific education requirement detected." }}
+        </p>
+
+    </article>
+
+
+    <!-- Responsibilities -->
+
+    <article class="analysis-card full-width">
+
+        <h2>
+            Responsibilities
+        </h2>
+
+        {% if profile.responsibilities %}
+
+        <ul>
+
+            {% for responsibility in profile.responsibilities %}
+
+            <li>
+                {{ responsibility }}
+            </li>
+
+            {% endfor %}
+
+        </ul>
+
+        {% else %}
+
+        <p>
+            No responsibilities detected.
+        </p>
+
+        {% endif %}
+
+    </article>
+
+
+    <!-- Keywords -->
+
+    <article class="analysis-card full-width">
+
+        <h2>
+            Job Keywords
+        </h2>
+
+        <div class="tag-list">
+
+            {% for keyword in profile.keywords %}
+
+            <span class="tag">
+                {{ keyword }}
+            </span>
+
+            {% endfor %}
+
+        </div>
+
+    </article>
+
+
+    <!-- Original Description -->
+
+    <article class="analysis-card full-width">
+
+        <h2>
+            Original Job Description
+        </h2>
+
+        <div class="description-box">
+            {{ job.description }}
+        </div>
+
+    </article>
+
+
+</section>
+
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}
+Resume Uploaded — ResumeAI
+{% endblock %}
+
+{% block content %}
+
+<section class="result-card">
+
+    <p class="eyebrow">
+        RESUME UPLOAD COMPLETE
+    </p>
+
+    <h1>
+        {{ resume.title }}
+    </h1>
+
+    <div class="success-box">
+
+        <strong>
+            ✓ Resume parsed successfully
+        </strong>
+
+        <p>
+            Your resume text has been extracted
+            and stored securely.
+        </p>
+
+    </div>
+
+    <div class="result-actions">
+
+        <a
+            href="{{ url_for('main.dashboard') }}"
+            class="btn"
+        >
+            Back to Dashboard
+        </a>
+
+        <a
+            href="{{ url_for('resume.upload') }}"
+            class="btn secondary"
+        >
+            Upload Another Resume
+        </a>
+
+    </div>
+
+</section>
+
+{% endblock %}

@@ -1,0 +1,348 @@
+{% extends "base.html" %}
+
+{% block title %}
+Analyze Resume — ResumeAI
+{% endblock %}
+
+{% block content %}
+
+<section class="page-header">
+
+    <p class="eyebrow">
+        RESUME ANALYSIS
+    </p>
+
+    <h1>
+        Analyze Your Resume
+    </h1>
+
+    <p>
+        Select a resume and a target job description
+        to calculate ATS compatibility.
+    </p>
+
+</section>
+
+
+<section class="analysis-card">
+
+    <form
+        id="analysisForm"
+        method="GET"
+        action="{{ url_for('analysis.select_resume') }}"
+    >
+
+        <!-- ================================= -->
+        <!-- SELECT RESUME -->
+        <!-- ================================= -->
+
+        <div class="form-group">
+
+            <label for="resume_id">
+                Select Resume
+            </label>
+
+            <select
+                id="resume_id"
+                name="resume_id"
+                required
+            >
+
+                <option
+                    value=""
+                    selected
+                    disabled
+                >
+                    Choose a resume
+                </option>
+
+                {% if resumes %}
+
+                    {% for resume in resumes %}
+
+                        <option value="{{ resume.id }}">
+                            {{ resume.title }}
+
+                            {% if resume.version %}
+                                — Version {{ resume.version }}
+                            {% endif %}
+                        </option>
+
+                    {% endfor %}
+
+                {% else %}
+
+                    <option
+                        value=""
+                        disabled
+                    >
+                        No resumes available
+                    </option>
+
+                {% endif %}
+
+            </select>
+
+        </div>
+
+
+        <!-- ================================= -->
+        <!-- SELECT JOB -->
+        <!-- ================================= -->
+
+        <div class="form-group">
+
+            <label for="job_id">
+                Select Job Description
+            </label>
+
+            <select
+                id="job_id"
+                name="job_id"
+                required
+            >
+
+                <option
+                    value=""
+                    selected
+                    disabled
+                >
+                    Choose a job
+                </option>
+
+                {% if jobs %}
+
+                    {% for job in jobs %}
+
+                        <option value="{{ job.id }}">
+
+                            {{ job.title }}
+
+                            {% if job.company %}
+                                — {{ job.company }}
+                            {% endif %}
+
+                        </option>
+
+                    {% endfor %}
+
+                {% else %}
+
+                    <option
+                        value=""
+                        disabled
+                    >
+                        No job descriptions available
+                    </option>
+
+                {% endif %}
+
+            </select>
+
+        </div>
+
+
+        <!-- ================================= -->
+        <!-- ANALYZE BUTTON -->
+        <!-- ================================= -->
+
+        <button
+            type="submit"
+            id="analyzeButton"
+            class="btn primary"
+            {% if not resumes or not jobs %}
+                disabled
+            {% endif %}
+        >
+            Analyze Resume
+        </button>
+
+    </form>
+
+</section>
+
+
+<!-- ================================= -->
+<!-- NO RESUMES -->
+<!-- ================================= -->
+
+{% if not resumes %}
+
+<section class="analysis-card">
+
+    <h3>
+        No resumes found
+    </h3>
+
+    <p>
+        Upload a resume before starting an analysis.
+    </p>
+
+    <a
+        href="{{ url_for('resume.upload') }}"
+        class="btn primary"
+    >
+        Upload Resume
+    </a>
+
+</section>
+
+{% endif %}
+
+
+<!-- ================================= -->
+<!-- NO JOBS -->
+<!-- ================================= -->
+
+{% if not jobs %}
+
+<section class="analysis-card">
+
+    <h3>
+        No job descriptions found
+    </h3>
+
+    <p>
+        Add a job description before starting an analysis.
+    </p>
+
+    <a
+        href="{{ url_for('jobs.create') }}"
+        class="btn primary"
+    >
+        Add Job Description
+    </a>
+
+</section>
+
+{% endif %}
+
+
+<!-- ================================= -->
+<!-- JAVASCRIPT -->
+<!-- ================================= -->
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const form =
+            document.getElementById(
+                "analysisForm"
+            );
+
+        const resumeSelect =
+            document.getElementById(
+                "resume_id"
+            );
+
+        const jobSelect =
+            document.getElementById(
+                "job_id"
+            );
+
+        const analyzeButton =
+            document.getElementById(
+                "analyzeButton"
+            );
+
+
+        if (
+            !form ||
+            !resumeSelect ||
+            !jobSelect
+        ) {
+            return;
+        }
+
+
+        form.addEventListener(
+            "submit",
+            function (event) {
+
+                event.preventDefault();
+
+
+                const resumeId =
+                    resumeSelect.value;
+
+                const jobId =
+                    jobSelect.value;
+
+
+                /* ==========================
+                   VALIDATE RESUME
+                   ========================== */
+
+                if (!resumeId) {
+
+                    alert(
+                        "Please select a resume."
+                    );
+
+                    resumeSelect.focus();
+
+                    return;
+                }
+
+
+                /* ==========================
+                   VALIDATE JOB
+                   ========================== */
+
+                if (!jobId) {
+
+                    alert(
+                        "Please select a job description."
+                    );
+
+                    jobSelect.focus();
+
+                    return;
+                }
+
+
+                /* ==========================
+                   DISABLE BUTTON
+                   ========================== */
+
+                if (analyzeButton) {
+
+                    analyzeButton.disabled = true;
+
+                    analyzeButton.innerText =
+                        "Analyzing...";
+                }
+
+
+                /* ==========================
+                   BUILD ANALYSIS URL
+                   ========================== */
+
+                const analysisUrl =
+                    "{{ url_for('analysis.run_analysis', resume_id=0, job_id=0) }}"
+                        .replace(
+                            "/0/0",
+                            "/" + resumeId + "/" + jobId
+                        );
+
+
+                /* ==========================
+                   START ANALYSIS
+                   ========================== */
+
+                window.location.href =
+                    analysisUrl;
+
+            }
+        );
+
+    }
+
+);
+
+</script>
+
+{% endblock %}

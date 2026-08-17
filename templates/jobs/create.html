@@ -1,0 +1,231 @@
+{% extends "base.html" %}
+
+{% block title %}
+Add Job Description — ResumeAI
+{% endblock %}
+
+{% block content %}
+
+<section class="page-header">
+
+    <div>
+
+        <p class="eyebrow">
+            JOB INTELLIGENCE
+        </p>
+
+        <h1>
+            Add Job Description
+        </h1>
+
+        <p>
+            Paste a job description to extract skills,
+            technologies and requirements.
+        </p>
+
+    </div>
+
+</section>
+
+
+<section class="form-card">
+
+    <form
+        method="POST"
+        action="{{ url_for('jobs.create') }}"
+        id="jobForm"
+    >
+
+        <!-- ================================================= -->
+        <!-- JOB TITLE -->
+        <!-- ================================================= -->
+
+        <div class="form-group">
+
+            <label for="title">
+                Job Title
+            </label>
+
+            <input
+                type="text"
+                id="title"
+                name="title"
+                value="{{ title|default('') }}"
+                placeholder="Python Backend Developer"
+                autocomplete="off"
+                required
+            >
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- COMPANY -->
+        <!-- ================================================= -->
+
+        <div class="form-group">
+
+            <label for="company">
+                Company
+            </label>
+
+            <input
+                type="text"
+                id="company"
+                name="company"
+                value="{{ company|default('') }}"
+                placeholder="ABC Technologies"
+                autocomplete="organization"
+            >
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- JOB DESCRIPTION -->
+        <!-- ================================================= -->
+
+        <div class="form-group">
+
+            <label for="description">
+                Job Description
+            </label>
+
+            <textarea
+                id="description"
+                name="description"
+                rows="18"
+                placeholder="Paste the complete job description here..."
+                required
+            >{{ description|default('') }}</textarea>
+
+            <small>
+                Include the responsibilities, required skills,
+                technologies, education and experience.
+            </small>
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- ACTIONS -->
+        <!-- ================================================= -->
+
+        <div class="form-actions">
+
+            <a
+                href="{{ url_for('jobs.index') }}"
+                class="btn secondary"
+            >
+                Cancel
+            </a>
+
+            <button
+                type="submit"
+                class="btn primary"
+                id="submitJobButton"
+            >
+                Save & Analyze Job
+            </button>
+
+        </div>
+
+    </form>
+
+</section>
+
+
+<!-- ========================================================= -->
+<!-- FORM JAVASCRIPT -->
+<!-- ========================================================= -->
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const form =
+            document.getElementById("jobForm");
+
+        const button =
+            document.getElementById("submitJobButton");
+
+        const title =
+            document.getElementById("title");
+
+        const description =
+            document.getElementById("description");
+
+
+        if (!form) {
+            return;
+        }
+
+
+        form.addEventListener(
+            "submit",
+            function (event) {
+
+                const jobTitle =
+                    title.value.trim();
+
+                const jobDescription =
+                    description.value.trim();
+
+
+                /* -----------------------------------------
+                   Validate title
+                ----------------------------------------- */
+
+                if (!jobTitle) {
+
+                    event.preventDefault();
+
+                    alert(
+                        "Please enter a job title."
+                    );
+
+                    title.focus();
+
+                    return;
+                }
+
+
+                /* -----------------------------------------
+                   Validate description
+                ----------------------------------------- */
+
+                if (!jobDescription) {
+
+                    event.preventDefault();
+
+                    alert(
+                        "Please enter a job description."
+                    );
+
+                    description.focus();
+
+                    return;
+                }
+
+
+                /* -----------------------------------------
+                   Prevent double submission
+                ----------------------------------------- */
+
+                button.disabled = true;
+
+                button.textContent =
+                    "Saving Job...";
+
+            }
+        );
+
+    }
+
+);
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,2309 @@
+{% extends "base.html" %}
+
+{% block title %}
+Dashboard — ResumeAI
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+/* =========================================================
+   RESUMEAI DASHBOARD
+========================================================= */
+
+.dashboard-page {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+.dashboard-header h1 {
+    margin: 8px 0;
+}
+
+.dashboard-header p {
+    margin: 0;
+}
+
+.dashboard-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+/* =========================================================
+   AI STATUS
+========================================================= */
+
+.ai-status-card {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 20px;
+    margin-bottom: 30px;
+    border-radius: 18px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(15, 23, 42, 0.98),
+            rgba(15, 42, 75, 0.96)
+        );
+
+    border: 1px solid rgba(56, 189, 248, 0.25);
+
+    box-shadow:
+        0 12px 35px rgba(15, 23, 42, 0.12);
+}
+
+.ai-status-icon {
+    width: 54px;
+    height: 54px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 15px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #06b6d4,
+            #2563eb
+        );
+
+    color: #ffffff;
+    font-size: 25px;
+
+    flex-shrink: 0;
+}
+
+.ai-status-card strong {
+    display: block;
+    font-size: 17px;
+    color: #ffffff;
+}
+
+.ai-status-card p {
+    margin: 5px 0 0;
+    color: rgba(255, 255, 255, 0.72);
+}
+
+/* =========================================================
+   STATISTICS
+========================================================= */
+
+.dashboard-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin: 30px 0;
+}
+
+.dashboard-stat {
+    position: relative;
+    overflow: hidden;
+
+    padding: 22px;
+
+    border-radius: 18px;
+
+    background:
+        linear-gradient(
+            145deg,
+            var(--card-bg, #ffffff),
+            rgba(248, 250, 252, 0.98)
+        );
+
+    border: 1px solid var(--border-color, #e5e7eb);
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        border-color 0.25s ease;
+}
+
+.dashboard-stat::after {
+    content: "";
+    position: absolute;
+
+    width: 90px;
+    height: 90px;
+
+    right: -35px;
+    top: -35px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(6, 182, 212, 0.16),
+            transparent 70%
+        );
+}
+
+.dashboard-stat:hover {
+    transform: translateY(-5px);
+
+    border-color:
+        rgba(6, 182, 212, 0.35);
+
+    box-shadow:
+        0 14px 35px rgba(15, 23, 42, 0.10);
+}
+
+.dashboard-stat .stat-icon {
+    font-size: 25px;
+    margin-bottom: 12px;
+}
+
+.dashboard-stat h3 {
+    margin: 0 0 8px;
+    font-size: 14px;
+    opacity: 0.65;
+}
+
+.dashboard-stat .stat-value {
+    display: block;
+
+    font-size: 32px;
+    font-weight: 800;
+
+    margin-bottom: 5px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #0f172a,
+            #0891b2
+        );
+
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.dashboard-stat .stat-label {
+    font-size: 13px;
+    opacity: 0.65;
+}
+
+/* =========================================================
+   MAIN GRID
+========================================================= */
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 22px;
+    margin-bottom: 25px;
+}
+
+.dashboard-card {
+    padding: 25px;
+
+    border-radius: 20px;
+
+    background:
+        var(--card-bg, #ffffff);
+
+    border:
+        1px solid var(--border-color, #e5e7eb);
+
+    box-shadow:
+        0 8px 30px rgba(15, 23, 42, 0.05);
+}
+
+.dashboard-card h2 {
+    margin: 5px 0 8px;
+}
+
+.dashboard-card > p {
+    opacity: 0.7;
+}
+
+/* =========================================================
+   SCORE
+========================================================= */
+
+.score-container {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    margin-top: 25px;
+}
+
+.score-circle {
+    width: 135px;
+    height: 135px;
+
+    border-radius: 50%;
+
+    border:
+        10px solid currentColor;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(6, 182, 212, 0.08),
+            transparent 70%
+        );
+}
+
+.score-circle span {
+    font-size: 30px;
+    font-weight: 800;
+}
+
+.score-details {
+    flex: 1;
+    width: 100%;
+}
+
+.score-row {
+    margin-bottom: 17px;
+}
+
+.score-row:last-child {
+    margin-bottom: 0;
+}
+
+.score-row-header {
+    display: flex;
+    justify-content: space-between;
+
+    margin-bottom: 7px;
+
+    font-size: 14px;
+}
+
+.progress-bar {
+    height: 9px;
+    width: 100%;
+
+    border-radius: 20px;
+
+    background:
+        rgba(127, 127, 127, 0.15);
+
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    width: 0;
+
+    border-radius: inherit;
+
+    background:
+        linear-gradient(
+            90deg,
+            #06b6d4,
+            #2563eb
+        );
+
+    transition:
+        width 0.8s ease;
+}
+
+/* =========================================================
+   QUICK ACTIONS
+========================================================= */
+
+.quick-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-top: 22px;
+}
+
+.quick-action {
+    display: flex;
+    align-items: center;
+
+    gap: 14px;
+
+    padding: 15px;
+
+    border-radius: 14px;
+
+    text-decoration: none;
+
+    border:
+        1px solid
+        var(--border-color, #e5e7eb);
+
+    color: inherit;
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.quick-action:hover {
+    transform: translateY(-2px);
+
+    background:
+        rgba(6, 182, 212, 0.05);
+
+    border-color:
+        rgba(6, 182, 212, 0.30);
+}
+
+.action-icon {
+    width: 42px;
+    height: 42px;
+
+    border-radius: 11px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(6, 182, 212, 0.14),
+            rgba(37, 99, 235, 0.12)
+        );
+
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.action-content {
+    flex: 1;
+}
+
+.action-content strong {
+    display: block;
+}
+
+.action-content span {
+    display: block;
+
+    margin-top: 3px;
+
+    font-size: 12px;
+    opacity: 0.65;
+}
+
+/* =========================================================
+   RECENT ANALYSES
+========================================================= */
+
+.analysis-list {
+    margin-top: 20px;
+}
+
+.analysis-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    gap: 15px;
+
+    padding: 15px 0;
+
+    border-bottom:
+        1px solid
+        var(--border-color, #e5e7eb);
+}
+
+.analysis-item:last-child {
+    border-bottom: none;
+}
+
+.analysis-info {
+    min-width: 0;
+}
+
+.analysis-info strong {
+    display: block;
+}
+
+.analysis-info span {
+    display: block;
+
+    font-size: 12px;
+
+    margin-top: 4px;
+
+    opacity: 0.6;
+}
+
+.analysis-score {
+    font-size: 20px;
+    font-weight: 800;
+    flex-shrink: 0;
+}
+
+/* =========================================================
+   AI INSIGHTS
+========================================================= */
+
+.insights-list {
+    display: grid;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.insight {
+    padding: 15px;
+
+    border-radius: 13px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(6, 182, 212, 0.07),
+            rgba(37, 99, 235, 0.06)
+        );
+
+    border:
+        1px solid
+        rgba(6, 182, 212, 0.12);
+}
+
+.insight strong {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.insight span {
+    font-size: 13px;
+    opacity: 0.7;
+}
+
+/* =========================================================
+   AI CHATBOT
+========================================================= */
+
+.ai-chat-card {
+    position: relative;
+    overflow: hidden;
+
+    margin-top: 25px;
+    padding: 28px;
+
+    border-radius: 22px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #07152f 0%,
+            #0b2347 45%,
+            #0b3650 100%
+        );
+
+    border:
+        1px solid
+        rgba(56, 189, 248, 0.25);
+
+    color: #ffffff;
+
+    box-shadow:
+        0 20px 55px rgba(7, 21, 47, 0.25);
+}
+
+.ai-chat-card::before {
+    content: "";
+
+    position: absolute;
+
+    width: 260px;
+    height: 260px;
+
+    right: -100px;
+    top: -120px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(34, 211, 238, 0.20),
+            transparent 70%
+        );
+
+    pointer-events: none;
+}
+
+.ai-chat-card::after {
+    content: "";
+
+    position: absolute;
+
+    width: 180px;
+    height: 180px;
+
+    left: -100px;
+    bottom: -100px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(37, 99, 235, 0.22),
+            transparent 70%
+        );
+
+    pointer-events: none;
+}
+
+/* =========================================================
+   CHAT HEADER
+========================================================= */
+
+.ai-chat-header {
+    position: relative;
+    z-index: 1;
+
+    display: flex;
+    align-items: center;
+
+    gap: 18px;
+
+    margin-bottom: 22px;
+}
+
+.ai-chat-header .eyebrow {
+    color: #67e8f9;
+    margin-bottom: 4px;
+}
+
+.ai-chat-header h2 {
+    margin: 0 0 7px;
+    color: #ffffff;
+}
+
+.ai-chat-header p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.70);
+}
+
+.ai-chat-avatar {
+    width: 62px;
+    height: 62px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 18px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #06b6d4,
+            #2563eb
+        );
+
+    font-size: 28px;
+
+    flex-shrink: 0;
+
+    box-shadow:
+        0 10px 30px
+        rgba(6, 182, 212, 0.30);
+}
+
+/* =========================================================
+   CHAT MESSAGES
+========================================================= */
+
+.chat-messages {
+    position: relative;
+    z-index: 1;
+
+    height: 340px;
+
+    overflow-y: auto;
+
+    padding: 18px;
+
+    border-radius: 17px;
+
+    background:
+        rgba(2, 12, 29, 0.48);
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.08);
+
+    scrollbar-width: thin;
+}
+
+.chat-message {
+    display: flex;
+    align-items: flex-start;
+
+    gap: 11px;
+
+    margin-bottom: 18px;
+}
+
+.chat-message:last-child {
+    margin-bottom: 0;
+}
+
+.message-avatar {
+    width: 36px;
+    height: 36px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 11px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #06b6d4,
+            #2563eb
+        );
+
+    font-size: 17px;
+
+    flex-shrink: 0;
+}
+
+.user-message {
+    justify-content: flex-end;
+}
+
+.user-message .message-avatar {
+    order: 2;
+
+    background:
+        rgba(255, 255, 255, 0.12);
+}
+
+.message-content {
+    max-width: 78%;
+
+    padding: 12px 15px;
+
+    border-radius: 14px;
+
+    background:
+        rgba(255, 255, 255, 0.07);
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.07);
+}
+
+.user-message .message-content {
+    background:
+        linear-gradient(
+            135deg,
+            #0369a1,
+            #2563eb
+        );
+
+    border-color:
+        rgba(255, 255, 255, 0.10);
+}
+
+.message-content strong {
+    display: block;
+
+    margin-bottom: 4px;
+
+    font-size: 13px;
+
+    color: #67e8f9;
+}
+
+.user-message .message-content strong {
+    color: #ffffff;
+}
+
+.message-content p {
+    margin: 0;
+
+    white-space: pre-wrap;
+
+    line-height: 1.6;
+
+    font-size: 14px;
+
+    color:
+        rgba(255, 255, 255, 0.88);
+}
+
+/* =========================================================
+   QUICK QUESTIONS
+========================================================= */
+
+.chat-suggestions {
+    position: relative;
+    z-index: 1;
+
+    display: flex;
+
+    gap: 9px;
+
+    flex-wrap: wrap;
+
+    margin-top: 15px;
+}
+
+.chat-suggestion {
+    padding: 9px 13px;
+
+    border-radius: 999px;
+
+    border:
+        1px solid
+        rgba(103, 232, 249, 0.20);
+
+    background:
+        rgba(6, 182, 212, 0.07);
+
+    color: #c7f9ff;
+
+    cursor: pointer;
+
+    font-size: 12px;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.chat-suggestion:hover {
+    transform: translateY(-1px);
+
+    background:
+        rgba(6, 182, 212, 0.16);
+
+    border-color:
+        rgba(103, 232, 249, 0.40);
+}
+
+/* =========================================================
+   CHAT INPUT
+========================================================= */
+
+.chat-input-area {
+    position: relative;
+    z-index: 1;
+
+    display: flex;
+
+    align-items: flex-end;
+
+    gap: 10px;
+
+    margin-top: 15px;
+}
+
+.chat-input-area textarea {
+    flex: 1;
+
+    min-height: 54px;
+    max-height: 150px;
+
+    resize: vertical;
+
+    padding: 15px;
+
+    border-radius: 15px;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.12);
+
+    background:
+        rgba(255, 255, 255, 0.07);
+
+    color: #ffffff;
+
+    font-family: inherit;
+
+    font-size: 14px;
+
+    box-sizing: border-box;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.chat-input-area textarea::placeholder {
+    color:
+        rgba(255, 255, 255, 0.45);
+}
+
+.chat-input-area textarea:focus {
+    border-color:
+        rgba(56, 189, 248, 0.55);
+
+    box-shadow:
+        0 0 0 3px
+        rgba(56, 189, 248, 0.08);
+}
+
+.chat-send-button {
+    min-width: 92px;
+    height: 54px;
+
+    border: none;
+
+    border-radius: 15px;
+
+    cursor: pointer;
+
+    background:
+        linear-gradient(
+            135deg,
+            #0ea5e9,
+            #6366f1
+        );
+
+    color: #ffffff;
+
+    font-weight: 700;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    transition:
+        transform 0.2s ease,
+        opacity 0.2s ease;
+}
+
+.chat-send-button:hover {
+    transform: translateY(-2px);
+}
+
+.chat-send-button:disabled {
+    opacity: 0.55;
+
+    cursor: not-allowed;
+
+    transform: none;
+}
+
+/* =========================================================
+   CHAT STATUS
+========================================================= */
+
+.chat-status {
+    position: relative;
+    z-index: 1;
+
+    min-height: 18px;
+
+    margin-top: 9px;
+
+    font-size: 12px;
+
+    color:
+        rgba(255, 255, 255, 0.50);
+}
+
+.chat-status.error {
+    color: #fca5a5;
+}
+
+/* =========================================================
+   SECTION SPACING
+========================================================= */
+
+.dashboard-section {
+    margin-bottom: 25px;
+}
+
+.empty-state {
+    padding: 25px 0;
+    text-align: center;
+    opacity: 0.65;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1000px) {
+
+    .dashboard-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 650px) {
+
+    .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .dashboard-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .score-container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .score-circle {
+        margin: 0 auto;
+    }
+
+    .dashboard-actions {
+        width: 100%;
+    }
+
+    .dashboard-actions .btn {
+        width: 100%;
+        text-align: center;
+    }
+
+    .analysis-item {
+        align-items: flex-start;
+    }
+
+    .ai-chat-card {
+        padding: 20px;
+    }
+
+    .ai-chat-header {
+        align-items: flex-start;
+    }
+
+    .ai-chat-avatar {
+        width: 50px;
+        height: 50px;
+        font-size: 23px;
+    }
+
+    .chat-input-area {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .chat-send-button {
+        width: 100%;
+    }
+
+    .message-content {
+        max-width: 78%;
+    }
+
+    .chat-messages {
+        height: 320px;
+    }
+}
+
+</style>
+
+
+<div class="dashboard-page">
+
+<!-- ======================================================
+     DASHBOARD HEADER
+====================================================== -->
+
+<section class="dashboard-header">
+
+    <div>
+
+        <p class="eyebrow">
+            RESUMEAI DASHBOARD
+        </p>
+
+        <h1>
+            Hello, {{ current_user.name }} 👋
+        </h1>
+
+        <p>
+            Analyze, optimize and improve your resume with AI.
+        </p>
+
+    </div>
+
+    <div class="dashboard-actions">
+
+        <a
+            href="{{ url_for('resume.upload') }}"
+            class="btn"
+        >
+            + Upload Resume
+        </a>
+
+        <a
+            href="{{ url_for('jobs.create') }}"
+            class="btn secondary"
+        >
+            + Add Job
+        </a>
+
+    </div>
+
+</section>
+
+
+<!-- ======================================================
+     AI STATUS
+====================================================== -->
+
+<div class="ai-status-card">
+
+    <div class="ai-status-icon">
+        🤖
+    </div>
+
+    <div>
+
+        <strong>
+            ResumeAI Assistant
+        </strong>
+
+        <p>
+            Your AI-powered resume and career analysis tools
+            are ready.
+        </p>
+
+    </div>
+
+</div>
+
+
+<!-- ======================================================
+     STATISTICS
+====================================================== -->
+
+<section class="dashboard-stats">
+
+    <div class="dashboard-stat">
+
+        <div class="stat-icon">📄</div>
+
+        <h3>RESUMES</h3>
+
+        <span class="stat-value">
+            {{ resume_count|default(0) }}
+        </span>
+
+        <span class="stat-label">
+            Uploaded resumes
+        </span>
+
+    </div>
+
+
+    <div class="dashboard-stat">
+
+        <div class="stat-icon">💼</div>
+
+        <h3>JOBS</h3>
+
+        <span class="stat-value">
+            {{ job_count|default(0) }}
+        </span>
+
+        <span class="stat-label">
+            Saved job descriptions
+        </span>
+
+    </div>
+
+
+    <div class="dashboard-stat">
+
+        <div class="stat-icon">📊</div>
+
+        <h3>ANALYSES</h3>
+
+        <span class="stat-value">
+            {{ analysis_count|default(0) }}
+        </span>
+
+        <span class="stat-label">
+            Completed analyses
+        </span>
+
+    </div>
+
+
+    <div class="dashboard-stat">
+
+        <div class="stat-icon">🎯</div>
+
+        <h3>ATS SCORE</h3>
+
+        <span class="stat-value">
+
+            {% if latest_analysis %}
+                {{ "%.0f"|format(latest_analysis.ats_score or 0) }}%
+            {% else %}
+                —
+            {% endif %}
+
+        </span>
+
+        <span class="stat-label">
+
+            {% if latest_analysis %}
+                Latest ATS score
+            {% else %}
+                Run an analysis
+            {% endif %}
+
+        </span>
+
+    </div>
+
+</section>
+
+
+<!-- ======================================================
+     MAIN DASHBOARD GRID
+====================================================== -->
+
+<section class="dashboard-grid">
+
+<div class="dashboard-card">
+
+    <p class="eyebrow">
+        RESUME PERFORMANCE
+    </p>
+
+    <h2>
+        Latest Analysis
+    </h2>
+
+    {% if latest_analysis %}
+
+    <div class="score-container">
+
+        <div class="score-circle">
+
+            <span>
+                {{ "%.0f"|format(latest_analysis.overall_score or 0) }}%
+            </span>
+
+        </div>
+
+        <div class="score-details">
+
+            <div class="score-row">
+
+                <div class="score-row-header">
+                    <span>ATS Compatibility</span>
+
+                    <strong>
+                        {{ "%.0f"|format(latest_analysis.ats_score or 0) }}%
+                    </strong>
+                </div>
+
+                <div class="progress-bar">
+
+                    <div
+                        class="progress-fill score-progress"
+                        data-score="{{ latest_analysis.ats_score or 0 }}"
+                    ></div>
+
+                </div>
+
+            </div>
+
+
+            <div class="score-row">
+
+                <div class="score-row-header">
+                    <span>Skills</span>
+
+                    <strong>
+                        {{ "%.0f"|format(latest_analysis.skills_score or 0) }}%
+                    </strong>
+                </div>
+
+                <div class="progress-bar">
+
+                    <div
+                        class="progress-fill score-progress"
+                        data-score="{{ latest_analysis.skills_score or 0 }}"
+                    ></div>
+
+                </div>
+
+            </div>
+
+
+            <div class="score-row">
+
+                <div class="score-row-header">
+                    <span>Experience</span>
+
+                    <strong>
+                        {{ "%.0f"|format(latest_analysis.experience_score or 0) }}%
+                    </strong>
+                </div>
+
+                <div class="progress-bar">
+
+                    <div
+                        class="progress-fill score-progress"
+                        data-score="{{ latest_analysis.experience_score or 0 }}"
+                    ></div>
+
+                </div>
+
+            </div>
+
+
+            <div class="score-row">
+
+                <div class="score-row-header">
+                    <span>Education</span>
+
+                    <strong>
+                        {{ "%.0f"|format(latest_analysis.education_score or 0) }}%
+                    </strong>
+                </div>
+
+                <div class="progress-bar">
+
+                    <div
+                        class="progress-fill score-progress"
+                        data-score="{{ latest_analysis.education_score or 0 }}"
+                    ></div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    {% else %}
+
+    <div class="empty-state">
+
+        <p>
+            You haven't completed an analysis yet.
+        </p>
+
+        <a
+            href="{{ url_for('analysis.select_resume') }}"
+            class="btn"
+        >
+            Start Analysis
+        </a>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+
+<div class="dashboard-card">
+
+    <p class="eyebrow">
+        QUICK ACTIONS
+    </p>
+
+    <h2>
+        Resume & Career Tools
+    </h2>
+
+    <p>
+        Access your most important ResumeAI tools.
+    </p>
+
+    <div class="quick-actions">
+
+        <a
+            href="{{ url_for('resume.upload') }}"
+            class="quick-action"
+        >
+            <span class="action-icon">📄</span>
+
+            <span class="action-content">
+                <strong>Upload Resume</strong>
+                <span>Add a new resume</span>
+            </span>
+        </a>
+
+
+        <a
+            href="{{ url_for('analysis.select_resume') }}"
+            class="quick-action"
+        >
+            <span class="action-icon">📊</span>
+
+            <span class="action-content">
+                <strong>Analyze Resume</strong>
+                <span>Run ATS + AI analysis</span>
+            </span>
+        </a>
+
+
+        <a
+            href="{{ url_for('jobs.create') }}"
+            class="quick-action"
+        >
+            <span class="action-icon">💼</span>
+
+            <span class="action-content">
+                <strong>Add Job Description</strong>
+                <span>Create a target job</span>
+            </span>
+        </a>
+
+
+        <a
+            href="{{ url_for('resume.index') }}"
+            class="quick-action"
+        >
+            <span class="action-icon">📁</span>
+
+            <span class="action-content">
+                <strong>My Resumes</strong>
+                <span>Manage your resumes</span>
+            </span>
+        </a>
+
+
+        <a
+            href="{{ url_for('jobs.index') }}"
+            class="quick-action"
+        >
+            <span class="action-icon">💼</span>
+
+            <span class="action-content">
+                <strong>My Jobs</strong>
+                <span>View saved job descriptions</span>
+            </span>
+        </a>
+
+    </div>
+
+</div>
+
+</section>
+
+
+<!-- ======================================================
+     RECENT ANALYSES
+====================================================== -->
+
+<section class="dashboard-card dashboard-section">
+
+    <p class="eyebrow">
+        RECENT ACTIVITY
+    </p>
+
+    <h2>
+        Recent Analyses
+    </h2>
+
+    {% if recent_analyses %}
+
+    <div class="analysis-list">
+
+        {% for item in recent_analyses %}
+
+        <div class="analysis-item">
+
+            <div class="analysis-info">
+
+                <strong>
+
+                    {% if item.job %}
+                        {{ item.job.title }}
+                    {% else %}
+                        Resume Analysis
+                    {% endif %}
+
+                </strong>
+
+                <span>
+
+                    {% if item.job and item.job.company %}
+                        {{ item.job.company }} ·
+                    {% endif %}
+
+                    {% if item.created_at %}
+                        {{ item.created_at.strftime('%d %b %Y') }}
+                    {% endif %}
+
+                </span>
+
+            </div>
+
+            <div class="analysis-score">
+                {{ "%.0f"|format(item.ats_score or 0) }}%
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    {% else %}
+
+    <div class="empty-state">
+
+        <p>
+            No analyses yet.
+        </p>
+
+        <a
+            href="{{ url_for('analysis.select_resume') }}"
+            class="btn"
+        >
+            Analyze Your Resume
+        </a>
+
+    </div>
+
+    {% endif %}
+
+</section>
+
+
+<!-- ======================================================
+     AI CAREER INSIGHTS
+====================================================== -->
+
+<section class="dashboard-card dashboard-section">
+
+    <p class="eyebrow">
+        AI CAREER INSIGHTS
+    </p>
+
+    <h2>
+        Improve Your Resume
+    </h2>
+
+    <div class="insights-list">
+
+        {% if latest_analysis and latest_analysis.missing_keywords %}
+
+        <div class="insight">
+
+            <strong>
+                🎯 Missing Keywords
+            </strong>
+
+            <span>
+                Add relevant keywords such as:
+                {{ latest_analysis.missing_keywords[:5]|join(', ') }}
+            </span>
+
+        </div>
+
+        {% else %}
+
+        <div class="insight">
+
+            <strong>
+                🎯 Improve ATS Compatibility
+            </strong>
+
+            <span>
+                Analyze your resume against a target job
+                to discover missing keywords and skills.
+            </span>
+
+        </div>
+
+        {% endif %}
+
+
+        <div class="insight">
+
+            <strong>
+                ✨ Strengthen Your Achievements
+            </strong>
+
+            <span>
+                Use measurable results and numbers when
+                describing your work experience.
+            </span>
+
+        </div>
+
+
+        <div class="insight">
+
+            <strong>
+                🚀 Keep Your Skills Updated
+            </strong>
+
+            <span>
+                Add relevant technologies and tools required
+                by your target jobs.
+            </span>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ======================================================
+     RESUMEAI CHATBOT
+====================================================== -->
+
+<section class="ai-chat-card">
+
+    <div class="ai-chat-header">
+
+        <div class="ai-chat-avatar">
+            🤖
+        </div>
+
+        <div>
+
+            <p class="eyebrow">
+                RESUMEAI ASSISTANT
+            </p>
+
+            <h2>
+                Your AI Career Assistant
+            </h2>
+
+            <p>
+                Ask anything about your resume, ATS score,
+                job applications, skills or career.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- CHAT MESSAGES -->
+
+    <div
+        id="chatMessages"
+        class="chat-messages"
+    >
+
+        <div class="chat-message ai-message">
+
+            <div class="message-avatar">
+                🤖
+            </div>
+
+            <div class="message-content">
+
+                <strong>
+                    ResumeAI
+                </strong>
+
+                <p>
+                    Hi {{ current_user.name }} 👋
+                    I'm your ResumeAI career assistant.
+                    How can I help you today?
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- QUICK QUESTIONS -->
+
+    <div class="chat-suggestions">
+
+        <button
+            type="button"
+            class="chat-suggestion"
+            onclick="sendSuggestion('How can I improve my resume for ATS?')"
+        >
+            🎯 Improve ATS
+        </button>
+
+        <button
+            type="button"
+            class="chat-suggestion"
+            onclick="sendSuggestion('What skills should I add to my resume?')"
+        >
+            💡 Skills
+        </button>
+
+        <button
+            type="button"
+            class="chat-suggestion"
+            onclick="sendSuggestion('How can I make my resume more professional?')"
+        >
+            ✨ Resume Tips
+        </button>
+
+        <button
+            type="button"
+            class="chat-suggestion"
+            onclick="sendSuggestion('How should I prepare for an interview?')"
+        >
+            🎤 Interview
+        </button>
+
+    </div>
+
+
+    <!-- CHAT INPUT -->
+
+    <div class="chat-input-area">
+
+        <textarea
+            id="chatInput"
+            rows="1"
+            placeholder="Ask ResumeAI anything about your career..."
+            aria-label="Ask ResumeAI"
+        ></textarea>
+
+        <button
+            type="button"
+            id="chatSendButton"
+            class="chat-send-button"
+        >
+            <span>Send</span>
+            <span>➤</span>
+        </button>
+
+    </div>
+
+
+    <!-- STATUS -->
+
+    <div
+        id="chatStatus"
+        class="chat-status"
+        aria-live="polite"
+    ></div>
+
+</section>
+
+</div>
+
+
+<!-- ======================================================
+     JAVASCRIPT
+====================================================== -->
+
+<script>
+
+/* =========================================================
+   SCORE PROGRESS BARS
+========================================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const progressBars =
+            document.querySelectorAll(
+                ".score-progress"
+            );
+
+        progressBars.forEach(
+            function (bar) {
+
+                let score =
+                    parseFloat(
+                        bar.dataset.score
+                    );
+
+                if (Number.isNaN(score)) {
+                    score = 0;
+                }
+
+                score =
+                    Math.max(
+                        0,
+                        Math.min(
+                            100,
+                            score
+                        )
+                    );
+
+                setTimeout(
+                    function () {
+
+                        bar.style.width =
+                            score + "%";
+
+                    },
+                    100
+                );
+
+            }
+        );
+
+    }
+);
+
+
+/* =========================================================
+   CHAT ELEMENTS
+========================================================= */
+
+const chatInput =
+    document.getElementById(
+        "chatInput"
+    );
+
+const sendChatButton =
+    document.getElementById(
+        "chatSendButton"
+    );
+
+const chatMessages =
+    document.getElementById(
+        "chatMessages"
+    );
+
+const chatStatus =
+    document.getElementById(
+        "chatStatus"
+    );
+
+
+/* =========================================================
+   ESCAPE HTML
+========================================================= */
+
+function escapeHTML(text) {
+
+    const div =
+        document.createElement(
+            "div"
+        );
+
+    div.textContent =
+        String(text);
+
+    return div.innerHTML;
+}
+
+
+/* =========================================================
+   SCROLL CHAT
+========================================================= */
+
+function scrollChatToBottom() {
+
+    if (!chatMessages) {
+        return;
+    }
+
+    chatMessages.scrollTop =
+        chatMessages.scrollHeight;
+}
+
+
+/* =========================================================
+   ADD USER MESSAGE
+========================================================= */
+
+function addUserMessage(message) {
+
+    const wrapper =
+        document.createElement(
+            "div"
+        );
+
+    wrapper.className =
+        "chat-message user-message";
+
+    wrapper.innerHTML = `
+
+        <div class="message-avatar">
+            👤
+        </div>
+
+        <div class="message-content">
+
+            <strong>
+                You
+            </strong>
+
+            <p>${escapeHTML(message)}</p>
+
+        </div>
+
+    `;
+
+    chatMessages.appendChild(
+        wrapper
+    );
+
+    scrollChatToBottom();
+}
+
+
+/* =========================================================
+   ADD AI MESSAGE
+========================================================= */
+
+function addAIMessage(message) {
+
+    const wrapper =
+        document.createElement(
+            "div"
+        );
+
+    wrapper.className =
+        "chat-message ai-message";
+
+    wrapper.innerHTML = `
+
+        <div class="message-avatar">
+            🤖
+        </div>
+
+        <div class="message-content">
+
+            <strong>
+                ResumeAI
+            </strong>
+
+            <p>${escapeHTML(message)}</p>
+
+        </div>
+
+    `;
+
+    chatMessages.appendChild(
+        wrapper
+    );
+
+    scrollChatToBottom();
+}
+
+
+/* =========================================================
+   LOADING MESSAGE
+========================================================= */
+
+function addLoadingMessage() {
+
+    const wrapper =
+        document.createElement(
+            "div"
+        );
+
+    wrapper.id =
+        "chatLoadingMessage";
+
+    wrapper.className =
+        "chat-message ai-message";
+
+    wrapper.innerHTML = `
+
+        <div class="message-avatar">
+            🤖
+        </div>
+
+        <div class="message-content">
+
+            <strong>
+                ResumeAI
+            </strong>
+
+            <p>
+                Thinking...
+            </p>
+
+        </div>
+
+    `;
+
+    chatMessages.appendChild(
+        wrapper
+    );
+
+    scrollChatToBottom();
+}
+
+
+function removeLoadingMessage() {
+
+    const loading =
+        document.getElementById(
+            "chatLoadingMessage"
+        );
+
+    if (loading) {
+        loading.remove();
+    }
+}
+
+
+/* =========================================================
+   QUICK SUGGESTION
+========================================================= */
+
+function sendSuggestion(message) {
+
+    if (!chatInput) {
+        return;
+    }
+
+    chatInput.value =
+        message;
+
+    sendChatMessage();
+}
+
+
+/* =========================================================
+   SEND CHAT MESSAGE
+========================================================= */
+
+async function sendChatMessage() {
+
+    if (!chatInput ||
+        !sendChatButton ||
+        !chatMessages) {
+
+        return;
+    }
+
+
+    const message =
+        chatInput.value.trim();
+
+
+    if (!message) {
+
+        chatInput.focus();
+
+        return;
+    }
+
+
+    /* -----------------------------------------------------
+       DISABLE
+    ----------------------------------------------------- */
+
+    chatInput.disabled =
+        true;
+
+    sendChatButton.disabled =
+        true;
+
+    if (chatStatus) {
+
+        chatStatus.textContent =
+            "ResumeAI is thinking...";
+
+        chatStatus.classList.remove(
+            "error"
+        );
+    }
+
+
+    /* -----------------------------------------------------
+       USER MESSAGE
+    ----------------------------------------------------- */
+
+    addUserMessage(
+        message
+    );
+
+    chatInput.value =
+        "";
+
+    addLoadingMessage();
+
+
+    try {
+
+        /*
+         * IMPORTANT
+         *
+         * Conversational chatbot endpoint:
+         *
+         * /analysis/chat
+         *
+         * Flask endpoint:
+         *
+         * analysis.chat
+         *
+         * NOT analysis.analyze
+         */
+
+        const response =
+            await fetch(
+                "{{ url_for('analysis.chat') }}",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json",
+
+                        "Accept":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        message: message
+                    })
+                }
+            );
+
+
+        let data = {};
+
+        try {
+
+            data =
+                await response.json();
+
+        } catch (error) {
+
+            data = {};
+
+        }
+
+
+        removeLoadingMessage();
+
+
+        /* -------------------------------------------------
+           HTTP ERROR
+        ------------------------------------------------- */
+
+        if (!response.ok) {
+
+            const errorMessage =
+                data.error ||
+                "The AI chatbot returned an error.";
+
+            addAIMessage(
+                "Sorry, I couldn't process your request.\n\n"
+                + errorMessage
+            );
+
+            if (chatStatus) {
+
+                chatStatus.textContent =
+                    "AI request failed.";
+
+                chatStatus.classList.add(
+                    "error"
+                );
+            }
+
+            return;
+        }
+
+
+        /* -------------------------------------------------
+           APPLICATION ERROR
+        ------------------------------------------------- */
+
+        if (!data.success) {
+
+            const errorMessage =
+                data.error ||
+                "Unable to generate an AI response.";
+
+            addAIMessage(
+                "Sorry, something went wrong.\n\n"
+                + errorMessage
+            );
+
+            if (chatStatus) {
+
+                chatStatus.textContent =
+                    "AI request failed.";
+
+                chatStatus.classList.add(
+                    "error"
+                );
+            }
+
+            return;
+        }
+
+
+        /* -------------------------------------------------
+           AI RESPONSE
+        ------------------------------------------------- */
+
+        let aiResponse =
+            data.response;
+
+
+        /*
+         * Some backend implementations may return
+         * the response using another common key.
+         */
+
+        if (!aiResponse) {
+
+            aiResponse =
+                data.message ||
+                data.answer ||
+                data.reply;
+        }
+
+
+        if (!aiResponse) {
+
+            addAIMessage(
+                "I received an empty response. Please try again."
+            );
+
+            return;
+        }
+
+
+        addAIMessage(
+            String(aiResponse)
+        );
+
+
+        if (chatStatus) {
+
+            chatStatus.textContent =
+                "ResumeAI is ready.";
+
+            chatStatus.classList.remove(
+                "error"
+            );
+        }
+
+
+    } catch (error) {
+
+        console.error(
+            "CHATBOT ERROR:",
+            error
+        );
+
+        removeLoadingMessage();
+
+        addAIMessage(
+            "I couldn't connect to the AI assistant. "
+            + "Please check your server and AI configuration, "
+            + "then try again."
+        );
+
+        if (chatStatus) {
+
+            chatStatus.textContent =
+                "Connection error.";
+
+            chatStatus.classList.add(
+                "error"
+            );
+        }
+
+    } finally {
+
+        chatInput.disabled =
+            false;
+
+        sendChatButton.disabled =
+            false;
+
+        chatInput.focus();
+
+        scrollChatToBottom();
+
+    }
+
+}
+
+
+/* =========================================================
+   SEND BUTTON
+========================================================= */
+
+if (sendChatButton) {
+
+    sendChatButton.addEventListener(
+        "click",
+        sendChatMessage
+    );
+
+}
+
+
+/* =========================================================
+   ENTER TO SEND
+========================================================= */
+
+if (chatInput) {
+
+    chatInput.addEventListener(
+        "keydown",
+        function (event) {
+
+            /*
+             * Enter       = Send
+             * Shift+Enter = New line
+             */
+
+            if (
+                event.key === "Enter" &&
+                !event.shiftKey
+            ) {
+
+                event.preventDefault();
+
+                sendChatMessage();
+
+            }
+
+        }
+    );
+
+}
+
+</script>
+
+{% endblock %}
